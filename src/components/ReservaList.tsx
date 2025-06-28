@@ -2,6 +2,9 @@
 'use client';
 
 import { Reserva, Dentist } from '@/models/types';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Check, X, Trash2 } from 'lucide-react';
 
 interface Props {
   reservas: Reserva[];
@@ -51,27 +54,29 @@ export default function ReservaList({ reservas, odontologo }: Props) {
   return (
     <div className="mt-6 space-y-4">
       {reservasFiltradas.map((reserva) => (
-        <div key={reserva.id} className="border rounded p-4 bg-white shadow space-y-1">
-          <h3 className="font-bold">{reserva.nombrePaciente}</h3>
+        <Card key={reserva.id} className="p-4 space-y-1">
+          <h3 className="font-bold text-lg text-blue-700">{reserva.nombrePaciente}</h3>
           <p>📅 {reserva.fecha} 🕑 {reserva.horario}</p>
           <p>✉️ {reserva.correo}</p>
           <p>📝 {reserva.motivo}</p>
-          <p className="text-sm text-gray-600">Estado: <strong>{reserva.estado}</strong></p>
+          <p className="text-sm text-gray-600">
+            Estado: <strong>{reserva.estado}</strong>
+          </p>
 
           {reserva.estado === 'pendiente' && (
-            <div className="flex gap-2 mt-2">
-              <button onClick={() => cambiarEstado(reserva.id, 'confirmada')} className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700">
-                Confirmar
-              </button>
-              <button onClick={() => cambiarEstado(reserva.id, 'cancelada')} className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
-                Cancelar
-              </button>
-              <button onClick={() => eliminarReserva(reserva.id)} className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700">
-                Eliminar
-              </button>
+            <div className="flex flex-wrap gap-2 mt-2">
+              <Button onClick={() => cambiarEstado(reserva.id, 'confirmada')}>
+                <Check className="mr-2 h-4 w-4" /> Confirmar
+              </Button>
+              <Button onClick={() => cambiarEstado(reserva.id, 'cancelada')} variant="destructive">
+                <X className="mr-2 h-4 w-4" /> Cancelar
+              </Button>
+              <Button onClick={() => eliminarReserva(reserva.id)} variant="secondary">
+                <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+              </Button>
             </div>
           )}
-        </div>
+        </Card>
       ))}
     </div>
   );

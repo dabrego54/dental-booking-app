@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Dentist, Reserva } from '@/models/types';
 import ReservaList from '@/components/ReservaList';
+import CalendarioReservas from '@/components/CalendarioReservas';
 
 export default function DashboardPage() {
   const [dentists, setDentists] = useState<Dentist[]>([]);
@@ -15,9 +16,10 @@ export default function DashboardPage() {
   }, []);
 
   const odontologoSeleccionado = dentists.find(d => d.id === odontologoId);
+  const reservasFiltradas = reservas.filter(r => r.odontologoId === odontologoId);
 
   return (
-    <main className="max-w-3xl mx-auto p-6">
+    <main className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-center mb-6">Dashboard de Odontólogos</h1>
 
       <select
@@ -33,7 +35,12 @@ export default function DashboardPage() {
         ))}
       </select>
 
-      <ReservaList reservas={reservas} odontologo={odontologoSeleccionado} />
+      {odontologoSeleccionado && (
+        <>
+          <ReservaList reservas={reservas} odontologo={odontologoSeleccionado} />
+          <CalendarioReservas reservas={reservasFiltradas} />
+        </>
+      )}
     </main>
   );
 }
