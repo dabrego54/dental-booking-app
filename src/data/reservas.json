@@ -1,0 +1,22 @@
+[
+  {
+    "nombrePaciente": "Daniel Abrego",
+    "correo": "danielabregot@gmail.com",
+    "motivo": "Limpieza Dental",
+    "fecha": "2025-06-29",
+    "horario": "18:30",
+    "odontologoId": "dentist-1",
+    "id": "ec2a4322-06d0-40b4-956a-b328d9dafb13",
+    "estado": "confirmada"
+  },
+  {
+    "nombrePaciente": "Fernando Rojas",
+    "correo": "fdorojas@gmail.com",
+    "motivo": "Limpieza dental",
+    "fecha": "2025-07-01",
+    "horario": "19:30",
+    "odontologoId": "dentist-3",
+    "id": "3cf17eec-ad7e-4009-a387-408e25d5f9b7",
+    "estado": "pendiente"
+  }
+]

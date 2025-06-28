@@ -1,0 +1,23 @@
+[
+  {
+    "id": "dentist-1",
+    "nombre": "Dra. Macarena Olivares",
+    "especialidad": "Ortodoncia",
+    "correo": "macarena.olivares@modental.cl",
+    "fotoUrl": "/macarena.png"
+  },
+  {
+    "id": "dentist-2",
+    "nombre": "Dr. Tomás Pérez",
+    "especialidad": "Endodoncia",
+    "correo": "tomas.perez@modental.cl",
+    "fotoUrl": "/tomas.png"
+  },
+  {
+    "id": "dentist-3",
+    "nombre": "Dra. Valentina López",
+    "especialidad": "Odontopediatría",
+    "correo": "valentina.lopez@modental.cl",
+    "fotoUrl": "/valentina.png"
+  }
+]

@@ -1,0 +1,6 @@
+{
+  "/api/reservas/route": "app/api/reservas/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/reservas/page": "app/reservas/page.js"
+}
