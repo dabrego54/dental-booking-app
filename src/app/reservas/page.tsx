@@ -1,9 +1,19 @@
-import ReservaForm from '@/components/ReservaForm';
+"use client";
 
-export default function ReservaPage() {
+import { SessionProvider } from "next-auth/react";
+import AuthStatus from "@/components/AuthStatus";
+import ReservaForm from "@/components/ReservaForm";
+
+export default function ReservasPage() {
   return (
-    <main className="min-h-screen bg-gray-100 py-10">
-      <ReservaForm />
-    </main>
+    <SessionProvider>
+      <div className="p-8 max-w-lg mx-auto">
+        <h1 className="text-2xl font-bold mb-4">Agendar Cita</h1>
+        <AuthStatus />
+        <div className="mt-6">
+          <ReservaForm />
+        </div>
+      </div>
+    </SessionProvider>
   );
 }
