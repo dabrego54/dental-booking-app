@@ -1,81 +1,134 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Reserva, Dentist } from '@/models/types';
+import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function ReservaForm() {
-  const [dentists, setDentists] = useState<Dentist[]>([]);
-  const [form, setForm] = useState({
-    nombrePaciente: '',
-    correo: '',
-    motivo: '',
-    fecha: '',
-    horario: '',
-    odontologoId: '',
-  });
+  const { data: session, status } = useSession();
 
-  useEffect(() => {
-    fetch('/data/dentists.json')
-      .then((res) => res.json())
-      .then((data) => setDentists(data));
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
+  const [nombre, setNombre] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [motivo, setMotivo] = useState("");
+  const [fecha, setFecha] = useState("");
+  const [hora, setHora] = useState("");
+  const [odontologo, setOdontologo] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const nuevaReserva: Reserva = {
-      ...form,
-      id: crypto.randomUUID(),
-      estado: 'pendiente',
+    if (!session) {
+      alert("Debes iniciar sesión con Google para agendar una cita.");
+      return;
+    }
+
+    const formData = {
+      nombre,
+      correo,
+      motivo,
+      fecha,
+      hora,
+      odontologo,
     };
 
-    const res = await fetch('/api/reservas', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(nuevaReserva),
-    });
-
-    if (res.ok) {
-      alert('Reserva creada correctamente 🎉');
-      setForm({
-        nombrePaciente: '',
-        correo: '',
-        motivo: '',
-        fecha: '',
-        horario: '',
-        odontologoId: '',
+    try {
+      const res = await fetch("/api/reservar-cita", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
-    } else {
-      alert('Error al crear la reserva ❌');
+
+      const text = await res.text();
+      let data;
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        console.error("Respuesta inesperada del servidor:", text);
+        throw new Error("Respuesta inesperada del servidor");
+      }
+
+      if (res.ok) {
+        alert("✅ Cita agendada correctamente en Google Calendar.");
+        setNombre("");
+        setCorreo("");
+        setMotivo("");
+        setFecha("");
+        setHora("");
+        setOdontologo("");
+      } else {
+        alert("❌ Error al agendar cita: " + (data?.message || "Error desconocido"));
+        console.error("Detalles del error:", data);
+      }
+    } catch (error) {
+      console.error("❌ Error de red:", error);
+      alert("❌ No se pudo conectar con el servidor");
     }
   };
 
+  if (status === "loading") return <p>Cargando...</p>;
+
+  if (!session) {
+    return (
+      <p className="text-red-600">
+        Por favor <strong>inicia sesión</strong> con Google para agendar una cita.
+      </p>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-4 p-6 bg-white shadow-xl rounded-xl">
-      <h2 className="text-2xl font-bold text-center mb-4">Agendar Cita</h2>
-
-      <input name="nombrePaciente" type="text" placeholder="Nombre del paciente" required className="w-full p-2 border rounded" value={form.nombrePaciente} onChange={handleChange} />
-      <input name="correo" type="email" placeholder="Correo electrónico" required className="w-full p-2 border rounded" value={form.correo} onChange={handleChange} />
-      <textarea name="motivo" placeholder="Motivo de consulta" required className="w-full p-2 border rounded" value={form.motivo} onChange={handleChange} />
-
-      <input name="fecha" type="date" required className="w-full p-2 border rounded" value={form.fecha} onChange={handleChange} />
-      <input name="horario" type="time" required className="w-full p-2 border rounded" value={form.horario} onChange={handleChange} />
-
-      <select name="odontologoId" required className="w-full p-2 border rounded" value={form.odontologoId} onChange={handleChange}>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <input
+        type="text"
+        placeholder="Nombre del paciente"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        className="w-full border px-4 py-2 rounded"
+        required
+      />
+      <input
+        type="email"
+        placeholder="Correo electrónico"
+        value={correo}
+        onChange={(e) => setCorreo(e.target.value)}
+        className="w-full border px-4 py-2 rounded"
+        required
+      />
+      <textarea
+        placeholder="Motivo de consulta"
+        value={motivo}
+        onChange={(e) => setMotivo(e.target.value)}
+        className="w-full border px-4 py-2 rounded"
+        required
+      />
+      <input
+        type="date"
+        value={fecha}
+        onChange={(e) => setFecha(e.target.value)}
+        className="w-full border px-4 py-2 rounded"
+        required
+      />
+      <input
+        type="time"
+        value={hora}
+        onChange={(e) => setHora(e.target.value)}
+        className="w-full border px-4 py-2 rounded"
+        required
+      />
+      <select
+        value={odontologo}
+        onChange={(e) => setOdontologo(e.target.value)}
+        className="w-full border px-4 py-2 rounded"
+        required
+      >
         <option value="">Seleccionar odontólogo</option>
-        {dentists.map((d) => (
-          <option key={d.id} value={d.id}>
-            {d.nombre} – {d.especialidad}
-          </option>
-        ))}
+        <option value="Dr. Pérez">Dr. Pérez</option>
+        <option value="Dra. Ramírez">Dra. Ramírez</option>
+        <option value="Dr. Soto">Dr. Soto</option>
       </select>
-
-      <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+      <button
+        type="submit"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+      >
         Reservar cita
       </button>
     </form>
